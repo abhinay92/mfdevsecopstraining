@@ -15,7 +15,7 @@ public class MfvulnerabileappController {
     private final String user = "admin";
     private final String password = "admin123"; // Hardcoded credentials
 
-    private static final Logger logger = Logger.getLogger(SuperVulnerableController.class.getName());
+    private static final Logger logger = Logger.getLogger(MfvulnerabileappController.class.getName());
 
     // SQL Injection
     @GetMapping("/user/{id}")
