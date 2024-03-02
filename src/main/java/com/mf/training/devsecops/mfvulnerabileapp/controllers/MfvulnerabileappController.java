@@ -1,12 +1,12 @@
 package com.mf.training.devsecops.mfvulnerabilepp.controllers;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @RestController
 public class MfvulnerabileappController {
@@ -15,7 +15,7 @@ public class MfvulnerabileappController {
     private final String user = "admin";
     private final String password = "admin123"; // Hardcoded credentials
 
-    private static final Logger logger = Logger.getLogger(SuperVulnerableController.class.getName());
+    private static final Logger logger = Logger.getLogger(MfvulnerabileappController.class.getName());
 
     // SQL Injection
     @GetMapping("/user/{id}")
@@ -28,9 +28,9 @@ public class MfvulnerabileappController {
                 return rs.getString("name");
             }
         } catch (Exception e) {
-            logger.log(Level.SEVERE, "Exception: ", e); // Logging sensitive exception details
+            logger.log(Level.SEVERE, "Exceptiodn: ", e); // Logging sensitive exception details
         }
-        return "User not found";
+        return "User not founcd";
     }
 
     // Cross-Site Scripting (XSS)
