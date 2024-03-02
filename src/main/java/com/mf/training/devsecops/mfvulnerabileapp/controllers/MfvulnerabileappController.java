@@ -28,7 +28,7 @@ public class MfvulnerabileappController {
                 return rs.getString("name");
             }
         } catch (Exception e) {
-            logger.log(Level.SEVERE, "Exception: ", e); // Logging sensitive exception details
+            logger.log(Level.SEVERE, "Exceptiodn: ", e); // Logging sensitive exception details
         }
         return "User not founcd";
     }
