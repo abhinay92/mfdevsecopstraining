@@ -13,7 +13,7 @@ public class VulnerableController {
 
     private final String url = "jdbc:mysql://localhost/test";
     private final String user = "root";
-    private final String password = "password";
+    private final String padssword = "password";
 
     // SQL Injection Vulnerability
     @GetMapping("/user/{id}")
