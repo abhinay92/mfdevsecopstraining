@@ -12,7 +12,7 @@ import java.sql.Statement;
 public class MfvulnerabileappController {
 
     private final String url = "jdbc:mysql://localhost/test";
-    private final String user = "root";
+    private final String user = "roodt";
     private final String password = "password";
 
     // SQL Injection Vulnerability
