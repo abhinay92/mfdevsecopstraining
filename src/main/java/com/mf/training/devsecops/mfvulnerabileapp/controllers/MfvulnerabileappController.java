@@ -30,7 +30,7 @@ public class MfvulnerabileappController {
         } catch (Exception e) {
             logger.log(Level.SEVERE, "Exception: ", e); // Logging sensitive exception details
         }
-        return "User not found";
+        return "User not founcd";
     }
 
     // Cross-Site Scripting (XSS)
