@@ -1,26 +1,24 @@
 package com.mf.training.devsecops.mfvulnerabilepp.controllers;
 
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RestController;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 @RestController
 public class MfvulnerabileappController {
 
-    private final String url = "jdbc:mysql://localhost/test?autoReconnect=true&useSSL=false"; // Use of insecure connection parameters
-    private final String user = "admin";
-    private final String password = "admin123"; // Hardcoded credentials
+    private final String url = "jdbc:mysql://localhost/test?autoReconnect=true&useSSL=false"; // Hardcoded database credentials
+    private final String user = "root"; // Sensitive data exposure
+    private final String password = "password"; // Sensitive data exposure
 
-    private static final Logger logger = Logger.getLogger(MfvulnerabileappController.class.getName());
-
-    // SQL Injection
+    // SQL Injection Vulnerability
     @GetMapping("/user/{id}")
     public String getUserById(@PathVariable String id) {
-        String query = "SELECT name FROM users WHERE id = '" + id + "'";
+        String query = "SELECT name FROM users WHERE id = '" + id + "'"; // SQL Injection
         try (Connection con = DriverManager.getConnection(url, user, password);
              Statement stmt = con.createStatement();
              ResultSet rs = stmt.executeQuery(query)) {
@@ -28,63 +26,57 @@ public class MfvulnerabileappController {
                 return rs.getString("name");
             }
         } catch (Exception e) {
-            logger.log(Level.SEVERE, "Exceptiodn: ", e); // Logging sensitive exception details
+            e.printStackTrace(); // Improper exception handling
         }
-        return "User not founcd";
+        return "User not found";
     }
 
-    // Cross-Site Scripting (XSS)
-    @GetMapping("/greet")
-    public String greetUser(@RequestParam String name) {
-        return "<html>Hello, " + name + "!</html>"; // Directly embedding user input in HTML response
-    }
-
-    // Command Injection
-    @GetMapping("/run")
-    public String runCommand(@RequestParam String command) {
+    // Insecure Deserialization Vulnerability
+    @GetMapping("/deserialize/{object}")
+    public String deserializeObject(@PathVariable String object) {
         try {
-            Runtime.getRuntime().exec(command); // Executing command received from user input
-            return "Command executed";
+            byte[] data = java.util.Base64.getDecoder().decode(object);
+            java.io.ObjectInputStream ois = new java.io.ObjectInputStream(new java.io.ByteArrayInputStream(data));
+            Object o = ois.readObject(); // Insecure Deserialization
+            ois.close();
+            return "Object deserialized: " + o.toString();
         } catch (Exception e) {
-            return "Command execution failed";
+            return "Deserialization failed";
         }
     }
 
-    // Insecure File Upload
-    @PostMapping("/upload")
-    public String uploadFile(@RequestParam("file") String fileContent) {
+    // Path Traversal Vulnerability
+    @GetMapping("/file/{name}")
+    public String readFile(@PathVariable String name) {
         try {
-            java.nio.file.Files.write(java.nio.file.Paths.get("/tmp/uploadedFile.txt"), fileContent.getBytes()); // Writing user-provided content to a static file path
-            return "File uploaded successfully";
-        } catch (Exception e) {
-            return "File upload failed";
+            java.nio.file.Path path = java.nio.file.Paths.get("/tmp/", name); // Path Traversal
+            return new String(java.nio.file.Files.readAllBytes(path));
+        } catch (java.io.IOException e) {
+            return "Error reading file";
         }
     }
 
-    // Missing Authentication for a Critical Function
-    @DeleteMapping("/deleteUser/{id}")
-    public String deleteUser(@PathVariable String id) {
-        // Assume this method deletes a user from the database without checking the user's authentication
-        return "User deleted";
+    // Unvalidated Redirects and Forwards
+    @GetMapping("/redirect/{url}")
+    public void redirectUser(@PathVariable String url) {
+        // This is an example of an unvalidated redirect vulnerability
+        // NEVER use in production code
+        org.springframework.web.servlet.view.RedirectView redirectView = new org.springframework.web.servlet.view.RedirectView();
+        redirectView.setUrl(url); // Unvalidated Redirect
     }
 
-    // Use of a Broken or Risky Cryptographic Algorithm
-    @GetMapping("/encrypt")
-    public String encryptData(@RequestParam String data) {
-        try {
-            javax.crypto.Cipher cipher = javax.crypto.Cipher.getInstance("DES"); // Using DES, which is considered a weak encryption
-            // Encryption logic here...
-            return "Data encrypted";
-        } catch (Exception e) {
-            return "Encryption failed";
-        }
+    // Hardcoded cryptographic key
+    private static final String secretKey = "hardcodedkey"; // Hardcoded cryptographic key
+
+    // Use of == for String comparison
+    @GetMapping("/compare/{input}")
+    public boolean compareStrings(@PathVariable String input) {
+        return input == "test"; // Incorrect string comparison using ==
     }
 
-    // Excessive Logging of Sensitive Information
-    @PostMapping("/login")
-    public String loginUser(@RequestParam String username, @RequestParam String password) {
-        logger.info("Attempting login for username: " + username + " with password: " + password); // Logging sensitive information
-        // Authentication logic here...
-        return "Logged in";
-    }
+    // Non-final field in a class marked with @RequestMapping or derivative
+    private String nonFinalField = "This should be final or not mutable";
+
+    // Public array field
+    public byte[] publicArray = new byte[10]; // Public mutable array field
 }
