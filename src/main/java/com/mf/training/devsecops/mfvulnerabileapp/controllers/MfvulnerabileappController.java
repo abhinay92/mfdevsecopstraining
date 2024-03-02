@@ -12,8 +12,8 @@ import java.sql.Statement;
 public class MfvulnerabileappController {
 
     private final String url = "jdbc:mysql://localhost/test";
-    private final String user = "roodt";
-    private final String password = "password";
+    private final static String user = "roodt";
+    private final static String password = "password";
 
     // SQL Injection Vulnerability
     @GetMapping("/user/{id}")
