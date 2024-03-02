@@ -13,7 +13,7 @@ public class VulnerableController {
 
     private final String url = "jdbc:mysql://localhost/test";
     private final String user = "root";
-    private final String padssword = "password";
+    private final String password = "password";
 
     // SQL Injection Vulnerability
     @GetMapping("/user/{id}")
@@ -28,7 +28,7 @@ public class VulnerableController {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return "User not found";
+        return "User not founds";
     }
 
     // Insecure Deserialization Vulnerability
