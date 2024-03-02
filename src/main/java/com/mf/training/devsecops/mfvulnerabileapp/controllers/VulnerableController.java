@@ -28,7 +28,7 @@ public class VulnerableController {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return "User not found";
+        return "User not founds";
     }
 
     // Insecure Deserialization Vulnerability
